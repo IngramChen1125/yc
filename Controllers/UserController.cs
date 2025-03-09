@@ -5,81 +5,68 @@ using YC.Model;
 using YC.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using YC.Service;
 
 namespace YC.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    [Route("api/[controller]")]
+    public class UsersController : ControllerBase
     {
-        private readonly DBContext _context;
+        private readonly IUserService _userService;
 
-        public UserController(DBContext context)
+        public UsersController(IUserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
-        // 取得全部使用者
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-        {
-            return await _context.Users.ToListAsync();
-        }
-
-        // 取得單一使用者
-        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null) 
+            {
+                return NotFound();
+            };
+            return Ok(user);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+        {
+            var users = await _userService.GetAllUsersAsync();
+            return Ok(users);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<User>> CreateUser(User user)
+        {
+            var createdUser = await _userService.CreateUserAsync(user);
+            return CreatedAtAction(nameof(GetUser), new { id = createdUser.Id }, createdUser);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateUser(User user)
+        {
+            var result = await _userService.UpdateUserAsync(user);
+            if (!result)
             {
                 return NotFound();
             }
 
-            return user;
-        }
-
-        // 新增使用者
-        [AllowAnonymous]
-        [HttpPost]
-        public async Task<ActionResult<User>> CreateUser(User user)
-        {
-            user.PasswordHash = HashPassword(user.PasswordHash); // 密碼加密
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
-        }
-
-        // 更新用戶
-        [AllowAnonymous]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, User user)
-        {
-            if (id != user.Id) return BadRequest();
-
-            var existingUser = await _context.Users.FindAsync(id);
-            if (existingUser == null) return NotFound();
-
-            existingUser.Username = user.Username;
-            existingUser.PasswordHash = HashPassword(user.PasswordHash); // 更新密碼加密
-
-            await _context.SaveChangesAsync();
             return NoContent();
         }
 
-        // 刪除用戶
-        [AllowAnonymous]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
-            if (user == null) return NotFound();
+            var result = await _userService.DeleteUserAsync(id);
+            if (!result)
+            {
+                return NotFound();
+            }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
             return NoContent();
-        }        
+        }
     }
 }
