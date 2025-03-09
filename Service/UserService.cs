@@ -32,8 +32,19 @@ namespace YC.Service
         }
 
         public async Task<bool> UpdateUserAsync(User user)
-        {
-            _context.Users.Update(user);
+        {            
+            var _user = _context.Users.FirstOrDefault(u => u.Id == user.Id);
+            if (_user != null)
+            {
+                // 更新帳號的欄位
+                _user.Account = user.Account;
+                _user.Password = user.Password;
+
+                // 更新資料庫
+                _context.Users.Update(_user);
+                _context.SaveChanges();
+            }
+
             return await _context.SaveChangesAsync() > 0;
         }
 
