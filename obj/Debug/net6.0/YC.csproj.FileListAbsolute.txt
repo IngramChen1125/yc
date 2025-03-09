@@ -1,0 +1,7 @@
+C:\MySelf\面試用\2025\永慶\YC\obj\Debug\net6.0\YC.csproj.AssemblyReference.cache
+C:\MySelf\面試用\2025\永慶\YC\obj\Debug\net6.0\YC.GeneratedMSBuildEditorConfig.editorconfig
+C:\MySelf\面試用\2025\永慶\YC\obj\Debug\net6.0\YC.AssemblyInfoInputs.cache
+C:\MySelf\面試用\2025\永慶\YC\obj\Debug\net6.0\YC.AssemblyInfo.cs
+C:\MySelf\面試用\2025\永慶\YC\obj\Debug\net6.0\YC.csproj.CoreCompileInputs.cache
+C:\MySelf\面試用\2025\永慶\YC\obj\Debug\net6.0\YC.MvcApplicationPartsAssemblyInfo.cs
+C:\MySelf\面試用\2025\永慶\YC\obj\Debug\net6.0\YC.MvcApplicationPartsAssemblyInfo.cache
